@@ -15,7 +15,7 @@ now(void)
 static double
 benchmark_encode(int n)
 {
-    char buf[13] = {0};
+    char buf[21] = {0};
     unsigned tally = 0;
 
     double beg = now();
@@ -26,7 +26,7 @@ benchmark_encode(int n)
         double lat = ldexp(a>>32, -32)*180 - 90;
         double lon = ldexp(a&0xffffffff, -32)*360 - 180;
 
-        geohash_encode(buf, 12, lat, lon);
+        geohash_encode(buf, lat, lon);
         tally += buf[11];
     }
     volatile unsigned sink = tally; (void)sink;
@@ -69,6 +69,6 @@ benchmark_decode(int n)
 int
 main(void)
 {
-    printf("encode %.3f M-ops/sec\n", benchmark_encode(25)/1e6);
+    printf("encode %.3f M-ops/sec\n", benchmark_encode(26)/1e6);
     printf("decode %.3f M-ops/sec\n", benchmark_decode(25)/1e6);
 }

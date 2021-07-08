@@ -6,8 +6,8 @@
 // if the buffer does not contain a valid geohash.
 int geohash_decode(double *lat, double *lon, const char *buf, int len);
 
-// Populate the buffer with an geohash encoding of a lat/lon pair. Does not
-// write a terminating null byte. Always succeeds.
-void geohash_encode(char *buf, int len, double lat, double lon);
+// Store a 20-byte geohash encoding of a lat/lon pair. Does not write a
+// terminating null byte. Truncate as needed.
+void geohash_encode(char *buf, double lat, double lon);
 
 #endif

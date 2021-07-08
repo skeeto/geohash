@@ -176,7 +176,6 @@ int
 main(void)
 {
     int fails = 0;
-    char buf[32] = {0};
 
     for (int i = 0; i < ntests; i++) {
         double lat, lon;
@@ -189,8 +188,10 @@ main(void)
     }
 
     for (int i = 0; i < ntests; i++) {
-        geohash_encode(buf, tests[i].len, tests[i].lat, tests[i].lon);
+        char buf[21] = {0};
+        geohash_encode(buf, tests[i].lat, tests[i].lon);
         if (memcmp(buf, tests[i].buf, tests[i].len)) {
+            buf[tests[i].len] = 0;
             printf("FAIL: %-20s %.17g %.17g, got %s\n",
                    tests[i].buf, tests[i].lat, tests[i].lon, buf);
             fails++;
