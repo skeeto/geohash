@@ -70,5 +70,5 @@ int
 main(void)
 {
     printf("encode %.3f M-ops/sec\n", benchmark_encode(26)/1e6);
-    printf("decode %.3f M-ops/sec\n", benchmark_decode(25)/1e6);
+    printf("decode %.3f M-ops/sec\n", benchmark_decode(26)/1e6);
 }

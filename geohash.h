@@ -2,8 +2,8 @@
 #ifndef GEOHASH_H
 #define GEOHASH_H
 
-// Decode a geohash buffer into a lat/lon pair. Returns 1 on success, or 0
-// if the buffer does not contain a valid geohash.
+// Validate and decode a geohash into a lat/lon pair. Returns 1 on success,
+// or 0 if the buffer does not contain a valid geohash.
 int geohash_decode(double *lat, double *lon, const char *buf, int len);
 
 // Store a 20-byte geohash encoding of a lat/lon pair. Does not write a
