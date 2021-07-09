@@ -153,6 +153,7 @@ geohash_decode(double *lat, double *lon, const char *buf, int len)
         0x3dc, 0x3dd, 0x3fc, 0x3fd, 0x3de, 0x3df, 0x3fe, 0x3ff,
     };
 
+    len = len > 20 ? 20 : len;
     unsigned long long blat = 0;
     unsigned long long blon = 0;
     int nlat = (0 + len*5) / 2;
