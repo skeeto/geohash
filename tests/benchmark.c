@@ -1,5 +1,4 @@
 #define _POSIX_C_SOURCE 200112L
-#include <math.h>
 #include <stdio.h>
 #include <time.h>
 #include "../geohash.h"
@@ -23,8 +22,8 @@ benchmark_encode(int n)
         unsigned long long a = i ^ 0x313198a2e0370734;
         a *= 0x3243f6a8885a308d;
         a ^= a >> 32;
-        double lat = ldexp(a>>32, -32)*180 - 90;
-        double lon = ldexp(a&0xffffffff, -32)*360 - 180;
+        double lat = (double)(a >> 32       ) / 0x100000000 * 180 -  90;
+        double lon = (double)(a & 0xffffffff) / 0x100000000 * 360 - 180;
 
         geohash_encode(buf, lat, lon);
         tally += buf[11];
