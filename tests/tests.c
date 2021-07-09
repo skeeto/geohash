@@ -188,7 +188,7 @@ main(void)
     }
 
     for (int i = 0; i < ntests; i++) {
-        char buf[21] = {0};
+        char buf[22] = {0};
         geohash_encode(buf, tests[i].lat, tests[i].lon);
         if (memcmp(buf, tests[i].buf, tests[i].len)) {
             buf[tests[i].len] = 0;

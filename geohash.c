@@ -205,7 +205,7 @@ geohash_decode(double *lat, double *lon, const char *buf, int len)
 void
 geohash_encode(char *buf, double lat, double lon)
 {
-    static const unsigned short interleave_b32[1024] = {
+    static const short interleave_b32[1024] = {
         0x3030, 0x3031, 0x3034, 0x3035, 0x3068, 0x306a, 0x306e, 0x3070,
         0x3230, 0x3231, 0x3234, 0x3235, 0x3268, 0x326a, 0x326e, 0x3270,
         0x3830, 0x3831, 0x3834, 0x3835, 0x3868, 0x386a, 0x386e, 0x3870,
@@ -335,28 +335,30 @@ geohash_encode(char *buf, double lat, double lon)
         0x7862, 0x7863, 0x7866, 0x7867, 0x7875, 0x7876, 0x7879, 0x787a,
         0x7a62, 0x7a63, 0x7a66, 0x7a67, 0x7a75, 0x7a76, 0x7a79, 0x7a7a,
     };
-    unsigned long long blat = (lat +  90) / 180 * (1ULL << 50);
-    unsigned long long blon = (lon + 180) / 360 * (1ULL << 50);
-    unsigned short chunks[10] = {
-        interleave_b32[(blon >> 40 & 0x3e0) | (blat >> 45 & 0x01f)],
-        interleave_b32[(blon >> 35 & 0x3e0) | (blat >> 40 & 0x01f)],
-        interleave_b32[(blon >> 30 & 0x3e0) | (blat >> 35 & 0x01f)],
-        interleave_b32[(blon >> 25 & 0x3e0) | (blat >> 30 & 0x01f)],
-        interleave_b32[(blon >> 20 & 0x3e0) | (blat >> 25 & 0x01f)],
-        interleave_b32[(blon >> 15 & 0x3e0) | (blat >> 20 & 0x01f)],
-        interleave_b32[(blon >> 10 & 0x3e0) | (blat >> 15 & 0x01f)],
-        interleave_b32[(blon >>  5 & 0x3e0) | (blat >> 10 & 0x01f)],
-        interleave_b32[(blon >>  0 & 0x3e0) | (blat >>  5 & 0x01f)],
-        interleave_b32[(blon <<  5 & 0x3e0) | (blat >>  0 & 0x01f)],
+    long long blat = (lat +  90) / 180 * (1LL << 53);
+    long long blon = (lon + 180) / 360 * (1LL << 53);
+    short chunks[11] = {
+        interleave_b32[(blon >> 43 & 0x3e0) | (blat >> 48 & 0x01f)],
+        interleave_b32[(blon >> 38 & 0x3e0) | (blat >> 43 & 0x01f)],
+        interleave_b32[(blon >> 33 & 0x3e0) | (blat >> 38 & 0x01f)],
+        interleave_b32[(blon >> 28 & 0x3e0) | (blat >> 33 & 0x01f)],
+        interleave_b32[(blon >> 23 & 0x3e0) | (blat >> 28 & 0x01f)],
+        interleave_b32[(blon >> 18 & 0x3e0) | (blat >> 23 & 0x01f)],
+        interleave_b32[(blon >> 13 & 0x3e0) | (blat >> 18 & 0x01f)],
+        interleave_b32[(blon >>  8 & 0x3e0) | (blat >> 13 & 0x01f)],
+        interleave_b32[(blon >>  3 & 0x3e0) | (blat >>  8 & 0x01f)],
+        interleave_b32[(blon <<  2 & 0x3e0) | (blat >>  3 & 0x01f)],
+        interleave_b32[(blon <<  7 & 0x3e0) | (blat <<  2 & 0x01f)],
     };
-    buf[ 0] = chunks[0] >> 8; buf[ 1] = chunks[0] >> 0;
-    buf[ 2] = chunks[1] >> 8; buf[ 3] = chunks[1] >> 0;
-    buf[ 4] = chunks[2] >> 8; buf[ 5] = chunks[2] >> 0;
-    buf[ 6] = chunks[3] >> 8; buf[ 7] = chunks[3] >> 0;
-    buf[ 8] = chunks[4] >> 8; buf[ 9] = chunks[4] >> 0;
-    buf[10] = chunks[5] >> 8; buf[11] = chunks[5] >> 0;
-    buf[12] = chunks[6] >> 8; buf[13] = chunks[6] >> 0;
-    buf[14] = chunks[7] >> 8; buf[15] = chunks[7] >> 0;
-    buf[16] = chunks[8] >> 8; buf[17] = chunks[8] >> 0;
-    buf[18] = chunks[9] >> 8; buf[19] = chunks[9] >> 0;
+    buf[ 0] = chunks[ 0] >> 8; buf[ 1] = chunks[ 0] >> 0;
+    buf[ 2] = chunks[ 1] >> 8; buf[ 3] = chunks[ 1] >> 0;
+    buf[ 4] = chunks[ 2] >> 8; buf[ 5] = chunks[ 2] >> 0;
+    buf[ 6] = chunks[ 3] >> 8; buf[ 7] = chunks[ 3] >> 0;
+    buf[ 8] = chunks[ 4] >> 8; buf[ 9] = chunks[ 4] >> 0;
+    buf[10] = chunks[ 5] >> 8; buf[11] = chunks[ 5] >> 0;
+    buf[12] = chunks[ 6] >> 8; buf[13] = chunks[ 6] >> 0;
+    buf[14] = chunks[ 7] >> 8; buf[15] = chunks[ 7] >> 0;
+    buf[16] = chunks[ 8] >> 8; buf[17] = chunks[ 8] >> 0;
+    buf[18] = chunks[ 9] >> 8; buf[19] = chunks[ 9] >> 0;
+    buf[20] = chunks[10] >> 8;
 }
