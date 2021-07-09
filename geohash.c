@@ -22,7 +22,7 @@ geohash_decode(double *lat, double *lon, const char *buf, int len)
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     };
-    static const unsigned short deinterleave[1024] = {
+    static const short deinterleave[1024] = {
         0x000, 0x001, 0x020, 0x021, 0x002, 0x003, 0x022, 0x023,
         0x040, 0x041, 0x060, 0x061, 0x042, 0x043, 0x062, 0x063,
         0x004, 0x005, 0x024, 0x025, 0x006, 0x007, 0x026, 0x027,
@@ -153,11 +153,9 @@ geohash_decode(double *lat, double *lon, const char *buf, int len)
         0x3dc, 0x3dd, 0x3fc, 0x3fd, 0x3de, 0x3df, 0x3fe, 0x3ff,
     };
 
-    len = len > 20 ? 20 : len;
-    unsigned long long blat = 0;
-    unsigned long long blon = 0;
-    int nlat = (0 + len*5) / 2;
-    int nlon = (1 + len*5) / 2;
+    len = len > 21 ? 21 : len;
+    long long blat = 0;
+    long long blon = 0;
 
     // Note: This has been optimized for decoding shorter geohashes by
     // bailing out early when input ends. The benchmark shows that this is
@@ -174,8 +172,8 @@ geohash_decode(double *lat, double *lon, const char *buf, int len)
             return 0;
         }
         int c = deinterleave[hi<<5 | lo];
-        blat = blat<<5 | (c & 0x1f);
-        blon = blon<<5 | c>>5;
+        blat |= (long long)(c & 0x01f) << (55 - i/2*5);
+        blon |= (long long)(c & 0x3e0) << (50 - i/2*5);
     }
 
     // Handle tail byte, if any
@@ -185,20 +183,24 @@ geohash_decode(double *lat, double *lon, const char *buf, int len)
             return 0;
         }
         int c = deinterleave[hi<<5];
-        blat = blat<<2 | (c>>3 & 0x3);
-        blon = blon<<3 | c>>7;
+        blat |= (long long)(c & 0x01f) << (55 - len/2*5);
+        blon |= (long long)(c & 0x3e0) << (50 - len/2*5);
     }
 
-    // Note: Floating point operation order has been carefully arranged to
-    // minimize rounding errors. Re-ordering (or using -ffast-math) will
-    // cause tests to fail.
-    double lat0 = (double)(blat + 0) / (1ULL << nlat);
-    double lat1 = (double)(blat + 1) / (1ULL << nlat);
-    *lat = (lat0 + lat1 - 1) * 90;
-    double lon0 = (double)(blon + 0) / (1ULL << nlon);
-    double lon1 = (double)(blon + 1) / (1ULL << nlon);
-    *lon = (lon0 + lon1 - 1) * 180;
+    // The bottom 5 bits are unused. Everything was done higher to simplify
+    // shifting (no prior right shifts were necessary). We'll need more
+    // overhead below.
+    blat >>= 5;
+    blon >>= 5;
 
+    // Compute the center (mean) between the decoded value (lower bound) and
+    // the next neighbor up (upper bound). Shortcut: Set the bit just below
+    // the last decoded bit to split the difference. Then shift the range by
+    // half to center it around zero.
+    long long hlat = blat + (1LL << (54 - (0 + len*5)/2)) - (1LL << 54);
+    long long hlon = blon + (1LL << (54 - (1 + len*5)/2)) - (1LL << 54);
+    *lat = 180 * hlat / (double)(1LL << 55);
+    *lon = 360 * hlon / (double)(1LL << 55);
     return 1;
 }
 
