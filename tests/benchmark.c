@@ -1,7 +1,21 @@
 #define _POSIX_C_SOURCE 200112L
 #include <stdio.h>
-#include <time.h>
 #include "../geohash.h"
+
+#ifdef _WIN32
+#include <windows.h>
+
+static double
+now(void)
+{
+    LARGE_INTEGER n, f;
+    QueryPerformanceFrequency(&f);
+    QueryPerformanceCounter(&n);
+    return (double)n.QuadPart / f.QuadPart;
+}
+
+#else
+#include <time.h>
 
 static double
 now(void)
@@ -10,6 +24,7 @@ now(void)
     clock_gettime(CLOCK_MONOTONIC, tv);
     return tv->tv_sec + tv->tv_nsec/1e9;
 }
+#endif
 
 static double
 benchmark_encode(int n)
