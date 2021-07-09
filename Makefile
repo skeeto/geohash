@@ -1,23 +1,26 @@
 CC      = cc
 CFLAGS  = -Wall -Wextra -O3 -g
 LDFLAGS =
-LDLIBS  =
+LDLIBS  = -lm
 
-all: check benchmark
+all: check benchmark example$(EXE)
 
-check: main
+check: main$(EXE)
 	@./main
 
 test: check
 
-main: tests/tests.c geohash.c geohash.h
+main$(EXE): tests/tests.c geohash.c geohash.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ tests/tests.c geohash.c $(LDLIBS)
 
-benchmark: benchmarks
+benchmark: benchmarks$(EXE)
 	@./benchmarks
 
-benchmarks: tests/benchmark.c geohash.c geohash.h
+benchmarks$(EXE): tests/benchmark.c geohash.c geohash.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ tests/benchmark.c geohash.c $(LDLIBS)
+
+example$(EXE): tests/example.c geohash.c geohash.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ tests/example.c geohash.c $(LDLIBS)
 
 clean:
 	rm -f main benchmarks
