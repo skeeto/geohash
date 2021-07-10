@@ -6,7 +6,7 @@ LDLIBS  = -lm
 all: check benchmark example$(EXE)
 
 check: main$(EXE)
-	@./main
+	@./main$(EXE)
 
 test: check
 
@@ -14,7 +14,7 @@ main$(EXE): tests/tests.c geohash.c geohash.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ tests/tests.c geohash.c $(LDLIBS)
 
 benchmark: benchmarks$(EXE)
-	@./benchmarks
+	@./benchmarks$(EXE)
 
 benchmarks$(EXE): tests/benchmark.c geohash.c geohash.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ tests/benchmark.c geohash.c $(LDLIBS)
