@@ -23,4 +23,4 @@ example$(EXE): tests/example.c geohash.c geohash.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ tests/example.c geohash.c $(LDLIBS)
 
 clean:
-	rm -f main benchmarks
+	rm -f main$(EXE) benchmarks$(EXE) example$(EXE)
