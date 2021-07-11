@@ -1,2 +1,7 @@
 main
 benchmarks
+example
+*.exe
+*.so
+*.dll
+__pycache__
