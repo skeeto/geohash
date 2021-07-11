@@ -1,11 +1,13 @@
 # Geohash encoder/decoder in C
 
-A lean, efficient geohash encoder and decoder library implemented in C. It
-does not depend on the C standard library and is well-suited for use in
-embedded systems. Care has been taken to ensure results are as accurate as
-possible within the limitations of IEEE 754 double precision. It's also
-very fast, decoding ~50 million and encoding ~80 million latlons per
-second on modern desktop and laptop hardware, making it likely the fastest
+A lean, efficient, accurate [geohash][] encoder and decoder library
+implemented in C. It does not depend on the C standard library and is
+well-suited for use in embedded systems. Care has been taken to ensure
+results are as accurate as possible within the limitations of IEEE 754
+double precision. It's also very fast, decoding ~50 million and encoding
+~80 million latlons per second on modern desktop and laptop hardware.
+
+This is the fastest, most correct, and most accurate (to double precision)
 geohash decoder and encoder currently available.
 
 ```c
@@ -31,3 +33,6 @@ lat/lon coordinates as command line arguments.
 
     $ ./example -e "40@26'26.160\"N 79@59'45.239\"W"
     dppn59uz86jzd  40@ 26' 26.160" N   79@ 59' 45.239" W
+
+
+[geohash]: https://en.wikipedia.org/wiki/Geohash
