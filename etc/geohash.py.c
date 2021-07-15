@@ -97,9 +97,42 @@ decode(PyObject *self, PyObject **args, Py_ssize_t nargs)
     return Py_BuildValue("ff", lat, lon);
 }
 
+PyDoc_STRVAR(maxerr_doc,
+"maxerr(length, /)\n--\n\n"
+"Compute the maximum error in degrees for a given geohash byte length,\n"
+"as pair (latitude_maxerr, longitude_maxerr).\n\n");
+
+static PyObject *
+maxerr(PyObject *self, PyObject **args, Py_ssize_t nargs)
+{
+    (void)self;
+
+    if (nargs != 1) {
+        PyErr_SetString(PyExc_TypeError, "takes exactly one argument");
+        return 0;
+    }
+
+    long n = PyLong_AsLong(args[0]);
+    if (PyErr_Occurred()) {
+        return 0;
+    }
+    if (n < 0) {
+        PyErr_SetString(PyExc_ValueError, "length must be non-negative");
+        return 0;
+    }
+    if (n > 21) {
+        n = 21;
+    }
+
+    double laterr = 90.0  / (1LL << ((5*n + 0) / 2));
+    double lonerr = 180.0 / (1LL << ((5*n + 1) / 2));
+    return Py_BuildValue("ff", laterr, lonerr);
+}
+
 static PyMethodDef methods[] = {
     {"encode", (PyCFunction)encode, METH_FASTCALL, encode_doc},
     {"decode", (PyCFunction)decode, METH_FASTCALL, decode_doc},
+    {"maxerr", (PyCFunction)maxerr, METH_FASTCALL, maxerr_doc},
     {0, 0, 0, 0}
 };
 
