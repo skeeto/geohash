@@ -13,6 +13,11 @@
 #include <Python.h>
 #include "../geohash.c"
 
+PyDoc_STRVAR(encode_doc,
+"encode(latitude, longitude, /)\n--\n\n"
+"Encode (latitude, longitude) degrees into a geohash.\n\n"
+"Latitude must be in [-90, 90) and longitude must be in [-180, 180).");
+
 static PyObject *
 encode(PyObject *self, PyObject **args, Py_ssize_t nargs)
 {
@@ -45,6 +50,11 @@ encode(PyObject *self, PyObject **args, Py_ssize_t nargs)
     geohash_encode(buf, lat, lon);
     return Py_BuildValue("s#", buf, (int)sizeof(buf));
 }
+
+PyDoc_STRVAR(decode_doc,
+"decode(geohash, /)\n--\n\n"
+"Decode a geohash into (latitude, longitude) degrees, as pair.\n\n"
+"The geohash must be either bytes or a string.");
 
 static PyObject *
 decode(PyObject *self, PyObject **args, Py_ssize_t nargs)
@@ -88,8 +98,8 @@ decode(PyObject *self, PyObject **args, Py_ssize_t nargs)
 }
 
 static PyMethodDef methods[] = {
-    {"encode", (PyCFunction)encode, METH_FASTCALL, "Encodes a geohash"},
-    {"decode", (PyCFunction)decode, METH_FASTCALL, "Decodes a geohash"},
+    {"encode", (PyCFunction)encode, METH_FASTCALL, encode_doc},
+    {"decode", (PyCFunction)decode, METH_FASTCALL, decode_doc},
     {0, 0, 0, 0}
 };
 
