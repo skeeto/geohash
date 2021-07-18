@@ -6,7 +6,7 @@
 //
 // Windows build (w64devkit):
 //   $ cc -shared -I"$PYTHONHOME/include" -L"$PYTHONHOME/libs" -DNDEBUG \
-//        -O3 -s -o geohash.pyd geohash.py.c -lpython3
+//        -O3 -s -ffreestanding -nostdlib -o geohash.pyd geohash.py.c -lpython3
 //
 // This is free and unencumbered software released into the public domain.
 #define PY_SSIZE_T_CLEAN
